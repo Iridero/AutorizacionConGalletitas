@@ -4,6 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 
 namespace AutorizacionConGalletitas.Controllers
 {
@@ -39,6 +42,18 @@ namespace AutorizacionConGalletitas.Controllers
         [HttpPost]
         public IActionResult Login(string rol)
         {
+            if (!string.IsNullOrWhiteSpace(rol))
+            {
+                var identity =
+                    new ClaimsIdentity(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        ClaimTypes.Name, ClaimTypes.Role);
+                identity.AddClaim(new Claim(ClaimTypes.Role, rol));
+                var principal = new ClaimsPrincipal(identity);
+                HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+                string url=HttpContext.Request.Query["returnUrl"];
+                return RedirectToAction("Index");
+            }
             return View();
         }
     }

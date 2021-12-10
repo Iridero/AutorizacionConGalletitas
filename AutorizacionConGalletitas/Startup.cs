@@ -45,6 +45,7 @@ namespace AutorizacionConGalletitas
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseAuthentication();
             app.UseMvcWithDefaultRoute();
         }
     }
